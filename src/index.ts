@@ -11,6 +11,20 @@ const processor = unified()
   .use(rehypeEscapeSvelte)
   .use(rehypeStringify, { allowDangerousHtml: true });
 
+/**
+ * Vite plugin that transforms Markdown files into HTML with Svelte-specific escaping.
+ *
+ * @example
+ * ```ts
+ * import { jana } from '@khotwa/jana'
+ *
+ * export default defineConfig({
+ *   plugins: [jana()]
+ * })
+ * ```
+ *
+ * @returns A Vite plugin instance
+ */
 export function jana(): Plugin {
   return {
     name: "jana",
@@ -18,12 +32,17 @@ export function jana(): Plugin {
     async transform(code, id) {
       if (!id.endsWith(".md")) return null;
 
-      const result = await processor.process(code);
+      try {
+        const result = await processor.process(code);
 
-      return {
-        code: result.toString(),
-        map: null,
-      };
+        return {
+          code: result.toString(),
+          map: null,
+        };
+      } catch (error: unknown) {
+        console.error(`Failed to process Markdown file "${id}":`, error);
+        return null;
+      }
     },
   };
 }
