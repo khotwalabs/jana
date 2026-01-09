@@ -101,22 +101,6 @@ Jana uses the [unified](https://unifiedjs.com/) ecosystem to process Markdown:
 
 The plugin automatically processes any file ending with `.md` during Vite's build process.
 
-## Advanced Usage
-
-### Custom Rehype Plugin
-
-Jana includes a built-in rehype plugin (`rehypeEscapeSvelte`) that escapes Svelte syntax in code blocks. This prevents Svelte from trying to interpret `{` and `}` as template expressions.
-
-The escaping applies to:
-
-- `&` → `&amp;`
-- `<` → `&lt;`
-- `>` → `&gt;`
-- `"` → `&quot;`
-- `'` → `&#39;`
-- `{` → `&#123;`
-- `}` → `&#125;`
-
 > **Note:** Support for custom unified plugins (remark and rehype) will be added in a future release.
 
 ## License
