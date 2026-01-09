@@ -1,7 +1,7 @@
 {
   "name": "@khotwa/jana",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "packageManager": "pnpm@10.27.0",
   "description": "A Vite plugin for processing Markdown files with Svelte-specific features.",
   "license": "MIT",
