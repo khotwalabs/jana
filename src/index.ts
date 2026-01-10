@@ -4,7 +4,7 @@ import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 import type { Plugin } from "vite";
 import { rehypeEscapeSvelte } from "./plugins/rehypeEscapeSvelte";
-import { remarkSvelteComponentBlock } from "./plugins/remarkComponentToBlock";
+import { remarkComponentToBlock } from "./plugins/remarkComponentToBlock";
 import type { JanaOptions } from "./types/index";
 import { usePlugins } from "./utils/index";
 
@@ -29,7 +29,7 @@ export function jana(options: JanaOptions = {}): Plugin {
   const processor = unified()
     // 1. Markdown → mdast
     .use(remarkParse)
-    .use(remarkSvelteComponentBlock)
+    .use(remarkComponentToBlock)
     .use(usePlugins(plugins.remark))
 
     // 2. mdast → hast

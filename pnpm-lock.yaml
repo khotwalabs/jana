@@ -8,6 +8,12 @@ importers:
 
   .:
     devDependencies:
+      '@types/mdast':
+        specifier: ^4.0.4
+        version: 4.0.4
+      '@types/unist':
+        specifier: ^3.0.3
+        version: 3.0.3
       rehype-stringify:
         specifier: ^10.0.1
         version: 10.0.1
