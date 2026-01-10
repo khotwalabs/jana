@@ -4,6 +4,7 @@ import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 import type { Plugin } from "vite";
 import { rehypeEscapeSvelte } from "./plugins/rehypeEscapeSvelte";
+import { remarkComponentToBlock } from "./plugins/remarkComponentToBlock";
 import type { JanaOptions } from "./types/index";
 import { usePlugins } from "./utils/index";
 
@@ -19,24 +20,6 @@ import { usePlugins } from "./utils/index";
  * })
  * ```
  *
- * @example
- * ```ts
- * import { jana } from '@khotwa/jana'
- * import remarkGfm from 'remark-gfm'
- * import rehypeSlug from 'rehype-slug'
- *
- * export default defineConfig({
- *   plugins: [
- *     jana({
- *       plugins: {
- *         remark: [remarkGfm],
- *         rehype: [[rehypeSlug, { prefix: 'heading-' }]]
- *       }
- *     })
- *   ]
- * })
- * ```
- *
  * @param options - Configuration options for the plugin
  * @returns A Vite plugin instance
  */
@@ -44,9 +27,15 @@ export function jana(options: JanaOptions = {}): Plugin {
   const { plugins = {} } = options;
 
   const processor = unified()
+    // 1. Markdown → mdast
     .use(remarkParse)
+    .use(remarkComponentToBlock)
     .use(usePlugins(plugins.remark))
+
+    // 2. mdast → hast
     .use(remarkRehype, { allowDangerousHtml: true })
+
+    // 3. hast → HTML (Svelte-safe)
     .use(usePlugins(plugins.rehype))
     .use(rehypeEscapeSvelte)
     .use(rehypeStringify, { allowDangerousHtml: true });
