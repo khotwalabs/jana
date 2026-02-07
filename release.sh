@@ -2,64 +2,73 @@
 
 # Release script for @khotwa/jana
 # Usage: ./release.sh <version>
-# Example: ./release.sh 0.0.3
+# Example: ./release.sh 0.2.0
 
 set -e
 
 if [ -z "$1" ]; then
-  echo "❌ Error: Version argument is required"
+  echo "Error: Version argument is required"
   echo "Usage: ./release.sh <version>"
-  echo "Example: ./release.sh 0.0.3"
+  echo "Example: ./release.sh 0.2.0"
   exit 1
 fi
 
 VERSION=$1
 TAG="v${VERSION}"
+BRANCH="release/${VERSION}"
 
-# Validate version format (semantic versioning)
+# Validate version format
 if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.-]+)?(\+[a-zA-Z0-9.-]+)?$ ]]; then
-  echo "❌ Error: Invalid version format. Use semantic versioning (e.g., 0.1.0, 1.0.0-beta.1)"
+  echo "Error: Invalid version format. Use semantic versioning (e.g., 0.2.0, 1.0.0-beta.1)"
   exit 1
 fi
 
 # Check if tag already exists
 if git rev-parse "$TAG" >/dev/null 2>&1; then
-  echo "❌ Error: Tag ${TAG} already exists"
+  echo "Error: Tag ${TAG} already exists"
   exit 1
 fi
-
-echo "🚀 Releasing version ${VERSION}..."
-
-# Step 1: Check current published versions
-echo "📦 Checking published versions..."
-PUBLISHED=$(npm view @khotwa/jana versions --json 2>/dev/null || echo "[]")
-echo "Published versions: ${PUBLISHED}"
 
 # Check if version is already published
+echo "Checking published versions..."
+PUBLISHED=$(npm view @khotwa/jana versions --json 2>/dev/null || echo "[]")
 if echo "$PUBLISHED" | grep -q "\"$VERSION\""; then
-  echo "❌ Error: Version ${VERSION} is already published"
+  echo "Error: Version ${VERSION} is already published"
   exit 1
 fi
 
-# Step 2: Update version in package.json
-echo "📝 Updating package.json to version ${VERSION}..."
-npm version ${VERSION} --no-git-tag-version
+# Make sure we're on main and up to date
+echo "Updating main..."
+git checkout main
+git pull origin main
 
-# Step 3: Commit the version change
-echo "💾 Committing version change..."
+# Create release branch
+echo "Creating branch ${BRANCH}..."
+git checkout -b "$BRANCH"
+
+# Update version
+echo "Updating package.json to version ${VERSION}..."
+npm version "$VERSION" --no-git-tag-version
+
+# Commit and push branch
 git add package.json
 git commit -m "chore: bump version to ${VERSION}"
+git push -u origin "$BRANCH"
 
-# Step 4: Push the commit
-echo "📤 Pushing commit..."
-git push
-
-# Step 5: Create and push tag
-echo "🏷️  Creating tag ${TAG}..."
-git tag ${TAG}
-git push origin ${TAG}
+# Create PR
+echo "Creating pull request..."
+PR_URL=$(gh pr create \
+  --title "chore: release ${VERSION}" \
+  --body "Bump version to ${VERSION}." \
+  --base main \
+  --head "$BRANCH")
 
 echo ""
-echo "✅ Release process started!"
-echo "📊 Check workflow status at: https://github.com/abdrizik/jana/actions"
-echo "🔍 Monitor with: npm view @khotwa/jana versions --json"
+echo "PR created: ${PR_URL}"
+echo ""
+echo "Next steps:"
+echo "  1. Merge the PR"
+echo "  2. Run: git checkout main && git pull origin main"
+echo "  3. Run: git tag ${TAG} && git push origin ${TAG}"
+echo ""
+echo "The tag push triggers the release workflow which publishes to npm."
