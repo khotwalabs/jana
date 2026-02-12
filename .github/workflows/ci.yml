@@ -28,7 +28,7 @@ jobs:
 
   auto-tag:
     needs: build
-    if: "github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'chore: bump version to')"
+    if: "github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'chore: release v')"
     runs-on: ubuntu-latest
     permissions:
       contents: write

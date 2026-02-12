@@ -52,14 +52,14 @@ npm version "$VERSION" --no-git-tag-version
 
 # Commit and push branch
 git add package.json
-git commit -m "chore: bump version to ${VERSION}"
+git commit -m "chore: release v${VERSION}"
 git push -u origin "$BRANCH"
 
 # Create PR
 echo "Creating pull request..."
 PR_URL=$(gh pr create \
-  --title "chore: release ${VERSION}" \
-  --body "Bump version to ${VERSION}." \
+  --title "chore: release v${VERSION}" \
+  --body "Release v${VERSION}." \
   --base main \
   --head "$BRANCH")
 
