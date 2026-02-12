@@ -1,5 +1,8 @@
 # Jana
 
+[![CI](https://github.com/abdrizik/jana/actions/workflows/ci.yml/badge.svg)](https://github.com/abdrizik/jana/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/abdrizik/jana/graph/badge.svg)](https://codecov.io/gh/abdrizik/jana)
+
 A Vite plugin that transforms Markdown files into HTML, allowing you to import and use Svelte components directly in your Markdown content. Extensible with remark and rehype plugins.
 
 ## Features

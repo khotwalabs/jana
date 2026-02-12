@@ -24,6 +24,10 @@ jobs:
       - run: pnpm fmt:check
       - run: pnpm lint
       - run: pnpm typecheck
+      - run: pnpm test:coverage
+      - uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
       - run: pnpm build
 
   auto-tag:
